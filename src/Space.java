@@ -52,6 +52,7 @@ public class Space
             else
                 result+= " ";
         result+="|";
+
         return result;
     }
 }

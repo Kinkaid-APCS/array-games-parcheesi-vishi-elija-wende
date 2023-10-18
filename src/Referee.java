@@ -5,11 +5,10 @@ public class Referee
     public Referee()
     {
         myBoard = new Board();
-        System.out.println(myBoard);
     }
 
     public void playGame()
     {
-        ;
+        System.out.println(myBoard);
     }
 }
