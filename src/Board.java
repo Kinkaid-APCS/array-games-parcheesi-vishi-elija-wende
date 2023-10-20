@@ -16,7 +16,6 @@ public class Board
     private int[] numChipsInStartingPointsPerPlayer = {4,4,4,4};
     private int[] numChipsInHomePerPlayer = {0,0,0,0};
 
-    private int[] safeSpaces = {0, 7, 12, 17, 24, 29, 34, 41, 46, 51, 58, 63};
 
     public Board()
     {
@@ -50,6 +49,29 @@ public class Board
 
     }
 
+    private String fillStart(int playerNumber){
+        String result = "";
+        for (int i = numChipsInStartingPointsPerPlayer[playerNumber]; i > 0; i--){
+            result += playerNumber;
+        }
+        for (int i = 4 - numChipsInStartingPointsPerPlayer[playerNumber]; i > 0; i--){
+            result += " ";
+        }
+        return result;
+    }
+
+    private String fillHome(int playerNumber){
+        String result = "";
+        for (int i = numChipsInHomePerPlayer[playerNumber]; i > 0; i--){
+            result += playerNumber;
+        }
+        for (int i = 4 - numChipsInHomePerPlayer[playerNumber]; i > 0; i--){
+            result += " ";
+        }
+        return result;
+    }
+
+
     public String toString()
     {
         String result = "";
@@ -58,20 +80,23 @@ public class Board
         for (int i = 0; i <= mainLoop.length - 1; i++){
             System.out.print(i + "\t");
             System.out.print(mainLoop[i]);
-            int peice = (i/17);
-            int peice2;
-            if (peice != 3){
-                peice2 = peice + 1;
+            int piece = (i/17);
+            int piece2;
+            if (piece != 3){
+                piece2 = piece + 1;
             } else {
-                peice2 = 0;
+                piece2 = 0;
             }
             if (i % 17 == 0){
-                System.out.println("<-- Player " + peice + " start. <" + peice + peice + peice + peice+ ">");
+                System.out.println("<-- Player " + piece + " start. <" + fillStart(piece) + ">");
             } else if (i % 17 == 12){
                 for (int j = 0; j < 6; j++) {
-                    System.out.print(safePaths[peice][j]);
+                    System.out.print(safePaths[piece][j]);
                 }
+                System.out.print("<" + fillHome(piece) + "> Safe Path for " + piece2);
                 System.out.println();
+            } else if ((i + 1) % 17 == 12){
+                System.out.println("  -5   -4   -3   -2   -1   0   Home");
             } else {
                 System.out.println();
             }
