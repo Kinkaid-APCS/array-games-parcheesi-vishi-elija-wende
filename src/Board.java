@@ -112,4 +112,8 @@ public class Board
         return result;
     }
 
+    public void setNCISPPP(int currentPlayer, int howManyLeft){
+        numChipsInStartingPointsPerPlayer[currentPlayer] -= howManyLeft;
+    }
+
 }
