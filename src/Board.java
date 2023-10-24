@@ -15,7 +15,7 @@ public class Board
     private Space[][] safePaths; // see note, below.
     private int[] numChipsInStartingPointsPerPlayer = {4,4,4,4};
     private int[] numChipsInHomePerPlayer = {0,0,0,0};
-
+    private int[] startSpaces = {0, 17, 34, 51};
 
     public Board()
     {
@@ -71,6 +71,10 @@ public class Board
         return result;
     }
 
+    public void setSpaceWithPiece(int whoIsHere, int howManyPieces){
+        mainLoop[startSpaces[whoIsHere]].setWhoIsHere(whoIsHere);
+        mainLoop[startSpaces[whoIsHere]].setNumPieces(howManyPieces);
+    }
 
     public String toString()
     {
@@ -116,4 +120,7 @@ public class Board
         numChipsInStartingPointsPerPlayer[currentPlayer] -= howManyLeft;
     }
 
+    public int getNumChipsInStartingPointsPerPLayer(int player) {
+        return numChipsInStartingPointsPerPlayer[player];
+    }
 }

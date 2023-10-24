@@ -19,6 +19,14 @@ public class Space
         isSafe = false;
     }
 
+    public void setWhoIsHere(int whoIsHere) {
+        this.whoIsHere = whoIsHere;
+    }
+
+    public void setNumPieces(int numPieces) {
+        this.numPieces = numPieces;
+    }
+
     public boolean isSafe()
     {
         return isSafe;
