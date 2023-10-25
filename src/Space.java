@@ -23,10 +23,17 @@ public class Space
         this.whoIsHere = whoIsHere;
     }
 
+    public int getWhoIsHere() {
+        return this.whoIsHere;
+    }
+
     public void setNumPieces(int numPieces) {
         this.numPieces = numPieces;
     }
 
+    public int getNumPieces() {
+        return this.numPieces;
+    }
     public boolean isSafe()
     {
         return isSafe;

@@ -17,6 +17,8 @@ public class Board
     private int[] numChipsInHomePerPlayer = {0,0,0,0};
     private int[] startSpaces = {0, 17, 34, 51};
 
+    private int[] homeSpaces = {63,12,29,46};
+
     public Board()
     {
         mainLoop = new Space[68];
@@ -123,4 +125,62 @@ public class Board
     public int getNumChipsInStartingPointsPerPLayer(int player) {
         return numChipsInStartingPointsPerPlayer[player];
     }
+
+    public boolean checkSpaceFrom(int currentSpace, int currentPlayer){
+        if (mainLoop[currentSpace].getWhoIsHere() == currentPlayer){
+            return true;
+        }
+        return false;
+    }
+
+    public int checkSpaceTo(int spaceTo, int currentPlayer){
+        if (mainLoop[spaceTo].getNumPieces() == 2){
+            return 0;
+            // 0 means you cant move there
+        } else if (mainLoop[spaceTo].getNumPieces() == 1){
+            if(mainLoop[spaceTo].getWhoIsHere() == currentPlayer){
+                return 1;
+                // 1 means there is one of your own pieces and you can move there
+            } else {
+                if (mainLoop[spaceTo].isSafe() == true){
+                    if (spaceTo == startSpaces[currentPlayer]){
+                        return 2;
+                    }
+                    return 0;
+                } else {
+                    return 2;
+                    // you can move there and you will take the oponent's current piece
+                }
+            }
+        } else {
+            return 1;
+        }
+    }
+
+    public void movePiece(int currSpace, int moves, int currPlayer /*, boolean OnHomeSpace */){
+        if (currSpace + moves <= 67){
+            int spaceTo = currSpace + moves;
+        } else {
+            int spaceTo = currSpace + moves - 68;
+        }
+        if (currSpace != homeSpaces[currPlayer]) {
+            int currPieces = mainLoop[currSpace].getNumPieces();
+            mainLoop[currSpace].setNumPieces(currPieces - 1);
+
+            if (!(currSpace + moves > homeSpaces[currPlayer])) {
+                int currPiecesTo = mainLoop[currSpace + moves].getNumPieces();
+                mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
+                mainLoop[currSpace + moves].setNumPieces(currPiecesTo + 1);
+            } else {
+                int extraMoves = currSpace + moves - homeSpaces[currPlayer];
+                int neededMoves = homeSpaces[currPlayer] - currSpace;
+                movePiece(currSpace, neededMoves, currPlayer);
+                // move to safeSpace by extraMoves.
+            }
+        } else {
+            // something
+        }
+    }
+
+
 }
