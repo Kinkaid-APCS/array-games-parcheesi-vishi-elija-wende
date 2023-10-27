@@ -14,7 +14,7 @@ public class Space
 
     public Space()
     {
-        whoIsHere = 0;
+        whoIsHere = 4;
         numPieces = 0;
         isSafe = false;
     }

@@ -102,7 +102,7 @@ public class Board
                 System.out.print("<" + fillHome(piece) + "> Safe Path for " + piece2);
                 System.out.println();
             } else if ((i + 1) % 17 == 12){
-                System.out.println("  -5   -4   -3   -2   -1   0   Home");
+                System.out.println("  -6   -5   -4   -3   -2   -1  Home");
             } else {
                 System.out.println();
             }
@@ -169,6 +169,12 @@ public class Board
 
             if (!(currSpace + moves > homeSpaces[currPlayer])) {
                 int currPiecesTo = mainLoop[currSpace + moves].getNumPieces();
+                if (mainLoop[currSpace + moves].getWhoIsHere() != currPlayer && mainLoop[currSpace + moves].getWhoIsHere() != 4) {
+                    int whoIsThere = mainLoop[currSpace + moves].getWhoIsHere();
+                    setNCISPPP(whoIsThere, getNumChipsInStartingPointsPerPLayer(whoIsThere));
+                    mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
+                    mainLoop[currSpace + moves].setNumPieces(currPiecesTo + 1);
+                }
                 mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
                 mainLoop[currSpace + moves].setNumPieces(currPiecesTo + 1);
             } else {
@@ -177,10 +183,38 @@ public class Board
                 movePiece(currSpace, neededMoves, currPlayer);
                 // move to safeSpace by extraMoves.
             }
-        } else {
-            // something
+        } else if (currSpace < 0){
+            int l = -1;
+            int currPieces = mainLoop[currSpace].getNumPieces();
+            int currHomePieces = safePaths[currPlayer][l + moves].getNumPieces();
+            mainLoop[currSpace].setNumPieces(currPieces - 1);
+            safePaths[currPlayer][l + moves].setWhoIsHere(currPlayer);
+            safePaths[currPlayer][l + moves].setNumPieces(currHomePieces + 1);
         }
     }
 
+    public int getNumPieces(int currentSpace){
+        return mainLoop[currentSpace].getNumPieces();
+    }
+
+    public int getWhichStartSpace(int currentPlayer){
+        return startSpaces[currentPlayer];
+    }
+
+    public boolean checkSpacesBetween(int startSpace, int endSpace){
+        for (int i = startSpace;;){
+            if (i == endSpace){
+                return true;
+            }
+            if (mainLoop[i].getNumPieces() == 2){
+                return false;
+            }
+            if (i + 1 == 68){
+                i = 0;
+            } else {
+                i++;
+            }
+        }
+    }
 
 }
