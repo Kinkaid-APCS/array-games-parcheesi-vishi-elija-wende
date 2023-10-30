@@ -66,7 +66,7 @@ public class Referee
                 if (myBoard.getNumChipsInStartingPointsPerPLayer(currentPlayer) != 4) {
                     playNormal();
                 }
-            } else if (false /*myBoard.getNumChipsInStartingPointsPerPLayer(currentPlayer) != 4 */){
+            } else if (myBoard.getNumChipsInStartingPointsPerPLayer(currentPlayer) != 4){
                 playNormal();
             }
             changePlayer(die1, die2);
@@ -107,10 +107,10 @@ public class Referee
         hasPiece(currentSpace2, 1);
         if (move1st == 1) {
             move2nd = 2;
-            die1 = 0;
+            //die1 = 0;
         } else {
             move2nd = 1;
-            die2 = 0;
+            //die2 = 0;
         }
         checkCanMove(currentSpace2, (currentSpace2 + getDice(move2nd)), 1);
         System.out.println("The piece on " + currentSpace2 + " has moved " + getDice(move2nd) + " spaces to " + (currentSpace2 + getDice(move2nd)));
@@ -148,8 +148,8 @@ public class Referee
     }
 
     private void checkCanMove(int currSpace, int endSpace, int j){
-        System.out.println(myBoard.checkSpacesBetween(currSpace, endSpace));
-        boolean canMove = myBoard.checkSpacesBetween(currSpace, endSpace);
+        System.out.println(myBoard.checkSpacesBetween(currSpace + 1, endSpace));
+        boolean canMove = myBoard.checkSpacesBetween(currSpace + 1, endSpace);
         if (!canMove){
             if (j == 0) {
                 playNormal();

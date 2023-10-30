@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Board
 {
 
@@ -18,6 +20,8 @@ public class Board
     private int[] startSpaces = {0, 17, 34, 51};
 
     private int[] homeSpaces = {63,12,29,46};
+
+    Scanner scanner = new Scanner(System.in);
 
     public Board()
     {
@@ -171,18 +175,26 @@ public class Board
                 int currPiecesTo = mainLoop[currSpace + moves].getNumPieces();
                 if (mainLoop[currSpace + moves].getWhoIsHere() != currPlayer && mainLoop[currSpace + moves].getWhoIsHere() != 4) {
                     int whoIsThere = mainLoop[currSpace + moves].getWhoIsHere();
-                    setNCISPPP(whoIsThere, getNumChipsInStartingPointsPerPLayer(whoIsThere));
+                    setNCISPPP(whoIsThere, getNumChipsInStartingPointsPerPLayer(whoIsThere) + 1);
+                    mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
+                    if ((homeSpaces[currPlayer] + 7) >= (currSpace + moves + 20)){
+                        System.out.println("Now your piece will move 20 more spaces!!");
+                        movePiece((currSpace+moves), 20, currPlayer);
+                    }
+                }
+                if (currPlayer != 0) {
                     mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
                     mainLoop[currSpace + moves].setNumPieces(currPiecesTo + 1);
                 }
-                mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
-                mainLoop[currSpace + moves].setNumPieces(currPiecesTo + 1);
-            } else {
+            } else if (homeSpaces[currPlayer] - 6 < currSpace && currSpace < homeSpaces[currPlayer]){
                 int extraMoves = currSpace + moves - homeSpaces[currPlayer];
                 int neededMoves = homeSpaces[currPlayer] - currSpace;
                 movePiece(currSpace, neededMoves, currPlayer);
-                // move to safeSpace by extraMoves.
+                //move to safeSpace by extraMoves.
             }
+            int currentPieces = mainLoop[currSpace + moves].getNumPieces();
+            mainLoop[currSpace + moves].setNumPieces(currentPieces + 1);
+            mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
         } else if (currSpace < 0){
             int l = -1;
             int currPieces = mainLoop[currSpace].getNumPieces();
@@ -216,5 +228,4 @@ public class Board
             }
         }
     }
-
 }
