@@ -21,6 +21,7 @@ public class Board
 
     private int[] homeSpaces = {63,12,29,46};
 
+    public int spaceTo;
     Scanner scanner = new Scanner(System.in);
 
     public Board()
@@ -130,11 +131,23 @@ public class Board
         return numChipsInStartingPointsPerPlayer[player];
     }
 
+    public void setNumChipsInHomePerPlayer(int currentPlayer){
+        numChipsInHomePerPlayer[currentPlayer] += 1;
+    }
+
+    public int getNumChipsInHomePerPlayer(int currentPlayer){
+        return numChipsInHomePerPlayer[currentPlayer];
+    }
+
+
     public boolean checkSpaceFrom(int currentSpace, int currentPlayer){
-        if (mainLoop[currentSpace].getWhoIsHere() == currentPlayer){
-            return true;
+        if (currentSpace >= 0) {
+            if (mainLoop[currentSpace].getWhoIsHere() == currentPlayer) {
+                return true;
+            }
+            return false;
         }
-        return false;
+        return true;
     }
 
     public int checkSpaceTo(int spaceTo, int currentPlayer){
@@ -161,25 +174,25 @@ public class Board
         }
     }
 
-    public void movePiece(int currSpace, int moves, int currPlayer /*, boolean OnHomeSpace */){
+    public void movePiece(int currSpace, int moves, int currPlayer, boolean onHomeSpace){
         if (currSpace + moves <= 67){
-            int spaceTo = currSpace + moves;
+            spaceTo = currSpace + moves;
         } else {
-            int spaceTo = currSpace + moves - 68;
+            spaceTo = currSpace + moves - 68;
         }
-        if (currSpace != homeSpaces[currPlayer]) {
+        if (!onHomeSpace) {
             int currPieces = mainLoop[currSpace].getNumPieces();
             mainLoop[currSpace].setNumPieces(currPieces - 1);
 
             if (!(currSpace + moves > homeSpaces[currPlayer])) {
-                int currPiecesTo = mainLoop[currSpace + moves].getNumPieces();
-                if (mainLoop[currSpace + moves].getWhoIsHere() != currPlayer && mainLoop[currSpace + moves].getWhoIsHere() != 4) {
-                    int whoIsThere = mainLoop[currSpace + moves].getWhoIsHere();
+                int currPiecesTo = mainLoop[spaceTo].getNumPieces();
+                if (mainLoop[spaceTo].getWhoIsHere() != currPlayer && mainLoop[spaceTo].getWhoIsHere() != 4) {
+                    int whoIsThere = mainLoop[spaceTo].getWhoIsHere();
                     setNCISPPP(whoIsThere, getNumChipsInStartingPointsPerPLayer(whoIsThere) + 1);
-                    mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
+                    mainLoop[spaceTo].setWhoIsHere(currPlayer);
                     if ((homeSpaces[currPlayer] + 7) >= (currSpace + moves + 20)){
                         System.out.println("Now your piece will move 20 more spaces!!");
-                        movePiece((currSpace+moves), 20, currPlayer);
+                        movePiece(spaceTo, 20, currPlayer, false);
                     }
                 }
                 if (currPlayer != 0) {
@@ -187,21 +200,35 @@ public class Board
                     mainLoop[currSpace + moves].setNumPieces(currPiecesTo + 1);
                 }
             } else if (homeSpaces[currPlayer] - 6 < currSpace && currSpace < homeSpaces[currPlayer]){
-                int extraMoves = currSpace + moves - homeSpaces[currPlayer];
-                int neededMoves = homeSpaces[currPlayer] - currSpace;
-                movePiece(currSpace, neededMoves, currPlayer);
-                //move to safeSpace by extraMoves.
+                int extraMoves1 = currSpace + moves - homeSpaces[currPlayer];
+                //int neededMoves = homeSpaces[currPlayer] - currSpace;
+                movePiece(homeSpaces[currPlayer], extraMoves1, currPlayer, true);
             }
-            int currentPieces = mainLoop[currSpace + moves].getNumPieces();
-            mainLoop[currSpace + moves].setNumPieces(currentPieces + 1);
-            mainLoop[currSpace + moves].setWhoIsHere(currPlayer);
-        } else if (currSpace < 0){
-            int l = -1;
-            int currPieces = mainLoop[currSpace].getNumPieces();
-            int currHomePieces = safePaths[currPlayer][l + moves].getNumPieces();
-            mainLoop[currSpace].setNumPieces(currPieces - 1);
-            safePaths[currPlayer][l + moves].setWhoIsHere(currPlayer);
-            safePaths[currPlayer][l + moves].setNumPieces(currHomePieces + 1);
+            int currentPieces = mainLoop[spaceTo].getNumPieces();
+            mainLoop[spaceTo].setNumPieces(currentPieces + 1);
+            mainLoop[spaceTo].setWhoIsHere(currPlayer);
+        } else if (currSpace < 0) {
+            if (currSpace + moves < 7) {
+                int currSafe = safePaths[currPlayer][currSpace + 6].getNumPieces();
+                safePaths[currPlayer][currSpace + 6].setNumPieces(currSafe - 1);
+                int currSafeTo = safePaths[currPlayer][currSpace + 6 + moves].getNumPieces();
+                safePaths[currPlayer][currSpace + 6 + moves].setNumPieces(currSafeTo + 1);
+            } else if (currSpace + moves == 7){
+                int currSafe = safePaths[currPlayer][currSpace + 6].getNumPieces();
+                safePaths[currPlayer][currSpace + 6].setNumPieces(currSafe - 1);
+                int chipsInHome = getNumChipsInHomePerPlayer(currPlayer);
+                setNumChipsInHomePerPlayer(chipsInHome + 1);
+            }
+        } else {
+            System.out.println("on its way");
+            if (currPlayer != 0) {
+                currPlayer -= 1;
+            } else {
+                currPlayer = 3;
+            }
+            safePaths[currPlayer][moves-1].setWhoIsHere(currPlayer);
+            int currSafe = safePaths[currPlayer][moves-1].getNumPieces();
+            safePaths[currPlayer][moves - 1].setNumPieces(currSafe + 1);
         }
     }
 
@@ -213,18 +240,22 @@ public class Board
         return startSpaces[currentPlayer];
     }
 
+    public int getWhichHomeSpace(int currentPlayer){
+        return homeSpaces[currentPlayer];
+    }
+
     public boolean checkSpacesBetween(int startSpace, int endSpace){
-        for (int i = startSpace;;){
-            if (i == endSpace){
+        for (int i = startSpace;; i++) {
+            if (i == endSpace) {
                 return true;
             }
-            if (mainLoop[i].getNumPieces() == 2){
-                return false;
-            }
-            if (i + 1 == 68){
+            if (i == 68) {
                 i = 0;
-            } else {
-                i++;
+            }
+            if (startSpace >= 0){
+                if (mainLoop[i].getNumPieces() == 2) {
+                    return false;
+                }
             }
         }
     }
