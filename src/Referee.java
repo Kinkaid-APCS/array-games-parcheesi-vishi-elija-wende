@@ -2,6 +2,7 @@ import java.sql.SQLOutput;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+
 public class Referee
 {
     private Board myBoard;
@@ -10,11 +11,13 @@ public class Referee
     private int currentPlayer = 0;
     Scanner scanner = new Scanner(System.in);
 
+
     public boolean gameGoing = true;
     public Referee()
     {
         myBoard = new Board();
     }
+
 
     public void playGame()
     {
@@ -28,14 +31,7 @@ public class Referee
             die1 = (int) (Math.random() * 6) + 1;
             die2 = (int) (Math.random() * 6) + 1;
             System.out.println("Player: " + currentPlayer + " you've rolled:\n" + "Die 1: " + die1 + "\n" + "Die 2: " + die2);
-            if (currentPlayer == 0) {
-                String cheat = scanner.next();
-                if (cheat.equals("cheat")){
-                    myBoard.setSpaceWithPiece(currentPlayer, 1);
-                    myBoard.setNCISPPP(currentPlayer, 1);
-                    myBoard.movePiece(0, 60, currentPlayer, false);
-                    if (true) continue;
-                }
+
                 if (die1 == 5 || die2 == 5) {
                     if ((die1 == 5 && die2 == 5) && (myBoard.getNumChipsInStartingPointsPerPLayer(currentPlayer) >= 2) && myBoard.getNumPieces(myBoard.getWhichStartSpace(currentPlayer)) <= 1) {
                         System.out.println("Do you want to take two pieces out?");
@@ -85,7 +81,6 @@ public class Referee
             }
             changePlayer(die1, die2);
         }
-    }
 
     public int getDice(int move){
         if (move == 1){
@@ -95,6 +90,7 @@ public class Referee
         }
         return 0;
     }
+
 
     private void changePlayer(int dieA,int dieB){
         if (dieA != dieB) {
@@ -106,8 +102,9 @@ public class Referee
         }
     }
 
+
     private void playNormal(){
-        System.out.println("Which dice do you want to use to move?");
+        System.out.println("Which die do you want to use to move? Input 1 for Die 1 and 2 for Die 2.");
         int move1st = scanner.nextInt();
         System.out.println("Which space is the piece you want to move on?");
         int currentSpace = scanner.nextInt();
@@ -118,10 +115,11 @@ public class Referee
             move3rd = currentSpace + getDice(move2nd);
         }
         checkCanMove(currentSpace, move3rd, 0);
-        System.out.println("The piece on " + currentSpace + " has moved " + getDice(move1st) + " spaces to " + move3rd);
+        System.out.println("The piece on " + currentSpace + " has moved " + getDice(move1st) + " spaces to " + (currentSpace + getDice(move1st)));
         myBoard.movePiece(currentSpace, getDice(move1st), currentPlayer, false);
 
-        System.out.println("For the second dice, on which space is the piece you want to use?");
+
+        System.out.println("For the second dice, on which space is the piece you want to move?");
         int currentSpace2 = scanner.nextInt();
         hasPiece(currentSpace2, 1);
         if (move1st == 1) {
@@ -137,12 +135,13 @@ public class Referee
             move3rd = currentSpace2 + getDice(move2nd);
         }
         checkCanMove(currentSpace2, move3rd, 1);
-        System.out.println("The piece on " + currentSpace2 + " has moved " + getDice(move2nd) + " spaces to " + move3rd);
+        System.out.println("The piece on " + currentSpace2 + " has moved " + getDice(move2nd) + " spaces to " + (currentSpace2 + getDice(move2nd)));
         myBoard.movePiece(currentSpace2, getDice(move2nd), currentPlayer, false);
     }
 
+
     private void playOne(){
-        System.out.println("For the second dice, on which space is the piece you want to use??");
+        System.out.println("For the second dice, on which space is the piece you want to use?");
         int move = scanner.nextInt();
         hasPiece(move, 1);
         if (die1 == 5) {
@@ -156,13 +155,10 @@ public class Referee
             move3rd = move + getDice(move2nd);
         }
         checkCanMove(move, move3rd, 1 );
-        System.out.println("The piece on " + move + " has moved " + getDice(move2nd) + " spaces to " + move3rd);
+        System.out.println("The piece on " + move + " has moved " + getDice(move2nd) + " spaces to " + (move + getDice(move2nd)));
         myBoard.movePiece(move, getDice(move2nd), currentPlayer, false);
     }
 
-    private void loopBoard(){
-        // check if moving how many spaces from spot goes over 67 and then loops it around the board
-    }
 
     private void hasPiece(int currSpace, int j){
         if (currSpace >= 0) {
@@ -180,11 +176,12 @@ public class Referee
         }
     }
 
-    private void checkCanMove(int currSpace, int endSpace, int j){
-        if (endSpace < myBoard.getWhichHomeSpace(currentPlayer)){
+
+    private void checkCanMove(int currSpace, int endSpace, int j) {
+        if (endSpace < myBoard.getWhichHomeSpace(currentPlayer)) {
             System.out.println(myBoard.checkSpacesBetween(currSpace + 1, endSpace));
             boolean canMove = myBoard.checkSpacesBetween(currSpace + 1, endSpace);
-            if (!canMove){
+            if (!canMove) {
                 if (j == 0) {
                     playNormal();
                 } else if (j == 1) {
@@ -194,7 +191,7 @@ public class Referee
         } else {
             System.out.println(myBoard.checkSpacesBetween(currSpace + 1, myBoard.getWhichHomeSpace(currentPlayer)));
             boolean canMoveSpecialCase = myBoard.checkSpacesBetween(currSpace + 1, myBoard.getWhichHomeSpace(currentPlayer));
-            if (!canMoveSpecialCase){
+            if (!canMoveSpecialCase) {
                 if (j == 0) {
                     playNormal();
                 } else if (j == 1) {
@@ -203,4 +200,5 @@ public class Referee
             }
         }
     }
+
 }
